@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
-import CustomButton from "./CustomButton/CustomButton";
+import DeleteNotePopup from "./DeleteNotePopup/DeleteNotePopup";
 const NoteItems = ({ item }) => {
   const [showDelete, setShowDelete] = React.useState(false);
   return (
@@ -68,7 +68,7 @@ const NoteItems = ({ item }) => {
           <Entypo name="trash" size={20} color={"white"}></Entypo>
         </Pressable>
       </View>
-      <CustomButton
+      <DeleteNotePopup
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
         onConfirm={() => {

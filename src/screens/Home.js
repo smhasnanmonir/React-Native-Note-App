@@ -1,13 +1,15 @@
-import { Text, FlatList, Pressable } from "react-native";
+import { Text, FlatList, Pressable, View } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NoteItems from "../components/NoteItems";
 import { dummyNotes } from "../constants/dummyNotes";
 import { Entypo } from "@expo/vector-icons";
+import AddNotePopup from "../components/AddNotePopup/AddNotePopup";
 
 const Home = () => {
   const navigation = useNavigation();
+  const [showAddNotePopup, setShowAddNotePopup] = React.useState(false);
 
   return (
     <SafeAreaView
@@ -34,6 +36,7 @@ const Home = () => {
       <Pressable
         onPress={() => {
           console.log("Pressed!!");
+          setShowAddNotePopup(true);
         }}
         style={{
           backgroundColor: "#ee9b00",
@@ -49,6 +52,19 @@ const Home = () => {
       >
         <Entypo name="plus" size={26} color={"white"}></Entypo>
       </Pressable>
+      <View>
+        <AddNotePopup
+          isOpen={showAddNotePopup}
+          onClose={() => setShowAddNotePopup(false)}
+          onConfirm={(value) => {
+            console.log("Confirmed!!", value);
+            setShowAddNotePopup(false);
+          }}
+          title="Add Note"
+          confirmLabel="Add"
+          cancelLabel="Cancel"
+        />
+      </View>
     </SafeAreaView>
   );
 };
