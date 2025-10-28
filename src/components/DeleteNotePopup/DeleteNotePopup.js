@@ -11,7 +11,7 @@ import { Button, ButtonText } from "@/src/components/ui/button";
 import { Text } from "@/src/components/ui/text";
 import { Heading } from "@/src/components/ui/heading";
 
-export const CustomButton = ({
+export const DeleteNotePopup = ({
   isOpen = false,
   onClose,
   onConfirm,
@@ -58,4 +58,4 @@ export const CustomButton = ({
   );
 };
 
-export default CustomButton;
+export default DeleteNotePopup;
