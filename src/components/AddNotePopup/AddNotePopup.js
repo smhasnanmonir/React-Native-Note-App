@@ -16,7 +16,6 @@ export default function AddNotePopup({
   isOpen = false,
   onClose,
   onConfirm,
-  title = "Add Note",
   cancelLabel = "Cancel",
   confirmLabel = "Add",
 }) {
@@ -24,6 +23,7 @@ export default function AddNotePopup({
   const [noteContent, setNoteContent] = React.useState("");
   const [emptyTitleError, setEmptyTitleError] = React.useState("");
   const [emptyContentError, setEmptyContentError] = React.useState("");
+
   const handleClose = () => {
     setNoteTitle("");
     setNoteContent("");
@@ -33,19 +33,23 @@ export default function AddNotePopup({
   };
 
   const handleConfirm = () => {
+    //   If not title, set error and return
     if (noteTitle.trim() === "") {
       setEmptyTitleError("Note Title is required");
       setEmptyContentError("");
       return;
     }
+    //   If not content, set error and return
     if (noteContent.trim() === "") {
       setEmptyContentError("Note Content is required");
       setEmptyTitleError("");
       return;
     }
+    //   If both are valid, call onConfirm
     if (onConfirm) onConfirm(noteTitle, noteContent);
     console.log("Confirmed!!", noteTitle);
     setEmptyTitleError("");
+    setEmptyContentError("");
     setNoteTitle("");
     setNoteContent("");
     if (onClose) onClose();
@@ -61,15 +65,22 @@ export default function AddNotePopup({
         <AlertDialogContent>
           <AlertDialogHeader>
             <Heading className="text-typography-950 font-semibold" size="md">
+              <Text className="text-typography-500 font-semibold text-xl">
+                Title
+              </Text>
               <Input
                 variant="outline"
                 size="lg"
                 isDisabled={false}
-                isInvalid={false}
+                isInvalid={noteTitle.trim() === ""}
                 isReadOnly={false}
               >
                 <InputField
-                  placeholder="Enter Note Title here..."
+                  placeholder={
+                    emptyTitleError !== ""
+                      ? emptyTitleError
+                      : "Enter Note Title here..."
+                  }
                   value={noteTitle}
                   onChangeText={setNoteTitle}
                   returnKeyType="done"
@@ -77,11 +88,11 @@ export default function AddNotePopup({
                 />
               </Input>
             </Heading>
-            <View>
-              <Text style={{ color: "red" }}>{emptyTitleError}</Text>
-            </View>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
+            <Text className="text-typography-500 font-semibold text-xl">
+              Content
+            </Text>
             <Input
               variant="outline"
               size="lg"
@@ -90,7 +101,11 @@ export default function AddNotePopup({
               isReadOnly={false}
             >
               <InputField
-                placeholder="Enter Note Content here..."
+                placeholder={
+                  emptyContentError !== ""
+                    ? emptyContentError
+                    : "Enter Note Content here..."
+                }
                 value={noteContent}
                 onChangeText={setNoteContent}
                 returnKeyType="done"
