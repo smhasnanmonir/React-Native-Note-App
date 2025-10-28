@@ -24,7 +24,7 @@ const NoteItems = ({ item }) => {
         }}
         numberOfLines={1}
       >
-        {item?.id} - {item?.title}
+        {item?.title}
       </Text>
       <Text
         style={{

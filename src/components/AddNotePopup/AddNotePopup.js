@@ -1,21 +1,17 @@
 import React from "react";
-import { Text, View } from "react-native";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogBody,
-  AlertDialogBackdrop,
-} from "@/src/components/ui/alert-dialog";
-import { Button, ButtonText } from "@/src/components/ui/button";
-import { Heading } from "@/src/components/ui/heading";
-import { Input, InputField } from "../ui/input";
-import supabase from "@/src/utils/supabase";
+  Text,
+  View,
+  Alert,
+  TextInput,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { useAddNote } from "@/src/queries/notes";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
-export default function AddNotePopup({
+function AddNotePopup({
   isOpen = false,
   onClose,
   onConfirm,
@@ -81,81 +77,216 @@ export default function AddNotePopup({
   console.log("Content", noteContent);
 
   return (
-    <>
-      <AlertDialog isOpen={isOpen} onClose={handleClose} size="md">
-        <AlertDialogBackdrop />
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <Heading className="text-typography-950 font-semibold" size="md">
-              <Text className="text-typography-500 font-semibold text-xl">
-                Title
-              </Text>
-              <Input
-                variant="outline"
-                size="lg"
-                isDisabled={false}
-                isInvalid={noteTitle.trim() === ""}
-                isReadOnly={false}
-              >
-                <InputField
-                  placeholder={
-                    emptyTitleError !== ""
-                      ? emptyTitleError
-                      : "Enter Note Title here..."
-                  }
-                  value={noteTitle}
-                  onChangeText={setNoteTitle}
-                  returnKeyType="done"
-                  onSubmitEditing={handleConfirm}
-                />
-              </Input>
-            </Heading>
-          </AlertDialogHeader>
-          <AlertDialogBody className="mt-3 mb-4">
-            <Text className="text-typography-500 font-semibold text-xl">
-              Content
-            </Text>
-            <Input
-              variant="outline"
-              size="lg"
-              isDisabled={false}
-              isInvalid={false}
-              isReadOnly={false}
-            >
-              <InputField
+    <Modal
+      visible={isOpen}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={handleClose}
+    >
+      <View style={styles.overlay}>
+        <View style={styles.modalContainer}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.title}>✏️ Add New Note</Text>
+          </View>
+
+          {/* Body */}
+          <View style={styles.body}>
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Title</Text>
+              <TextInput
+                placeholder={
+                  emptyTitleError !== ""
+                    ? emptyTitleError
+                    : "Enter Note Title here..."
+                }
+                value={noteTitle}
+                onChangeText={setNoteTitle}
+                keyboardType="default"
+                autoCorrect={false}
+                autoCapitalize="sentences"
+                autoComplete="off"
+                textContentType="none"
+                returnKeyType="next"
+                blurOnSubmit={false}
+                style={[
+                  styles.input,
+                  emptyTitleError !== "" && styles.inputError,
+                ]}
+                placeholderTextColor="#9CA3AF"
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>Content</Text>
+              <TextInput
                 placeholder={
                   emptyContentError !== ""
                     ? emptyContentError
-                    : "Enter Note Content here..."
+                    : "Write your note here..."
                 }
                 value={noteContent}
                 onChangeText={setNoteContent}
-                returnKeyType="done"
-                onSubmitEditing={handleConfirm}
+                keyboardType="default"
+                autoCorrect={false}
+                autoCapitalize="sentences"
+                autoComplete="off"
+                textContentType="none"
+                multiline={true}
+                numberOfLines={8}
+                style={[
+                  styles.textArea,
+                  emptyContentError !== "" && styles.inputError,
+                ]}
+                placeholderTextColor="#9CA3AF"
               />
-            </Input>
-          </AlertDialogBody>
-          <AlertDialogFooter className="">
-            <Button
-              variant="outline"
-              action="secondary"
-              onPress={handleClose}
-              size="sm"
+            </View>
+          </View>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.cancelButton} onPress={handleClose}>
+              <Text style={styles.cancelButtonText}>{cancelLabel}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.addButton, isPending && styles.addButtonDisabled]}
+              onPress={handleConfirm}
+              disabled={isPending}
             >
-              <ButtonText>
-                {isPending ? (
-                  <LoadingSpinner></LoadingSpinner>
-                ) : (
-                  <Text>{cancelLabel}</Text>
-                )}
-              </ButtonText>
-            </Button>
-            <Button size="sm" onPress={handleConfirm}>
-              <ButtonText>{confirmLabel}</ButtonText>
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+              {isPending ? (
+                <LoadingSpinner />
+              ) : (
+                <Text style={styles.addButtonText}>{confirmLabel}</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: "#1F1F1F",
+    borderRadius: 20,
+    width: "100%",
+    maxWidth: 400,
+    maxHeight: "80%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  header: {
+    padding: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: "#333",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  body: {
+    padding: 24,
+    gap: 20,
+  },
+  inputGroup: {
+    gap: 8,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    marginBottom: 4,
+  },
+  input: {
+    backgroundColor: "#2A2A2A",
+    borderWidth: 2,
+    borderColor: "#404040",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    color: "#FFFFFF",
+    minHeight: 48,
+  },
+  textArea: {
+    backgroundColor: "#2A2A2A",
+    borderWidth: 2,
+    borderColor: "#404040",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    color: "#FFFFFF",
+    minHeight: 180,
+    maxHeight: 400,
+    textAlignVertical: "top",
+  },
+  inputError: {
+    borderColor: "#EF4444",
+  },
+  footer: {
+    flexDirection: "row",
+    gap: 12,
+    padding: 24,
+    paddingTop: 0,
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: "#374151",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  addButton: {
+    flex: 1,
+    backgroundColor: "#F59E0B",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#F59E0B",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  addButtonDisabled: {
+    backgroundColor: "#6B7280",
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  addButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#1F2937",
+  },
+});
+
+export default AddNotePopup;

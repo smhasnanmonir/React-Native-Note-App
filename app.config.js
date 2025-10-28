@@ -1,16 +1,18 @@
 import "dotenv/config";
+import plugin from "tailwindcss";
 
 export default {
   expo: {
-    name: "note",
+    name: "Native Note",
     slug: "note",
     version: "1.0.0",
+    plugin: ["expo-font"],
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/sticky-note.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
     splash: {
-      image: "./assets/splash-icon.png",
+      image: "./assets/sticky-note-512.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff",
     },
@@ -18,19 +20,22 @@ export default {
       supportsTablet: true,
     },
     android: {
+      package: "com.hasnan.nativenote",
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/sticky-note.png",
         backgroundColor: "#ffffff",
       },
       edgeToEdgeEnabled: true,
     },
     web: {
-      favicon: "./assets/favicon.png",
+      favicon: "./assets/sticky-note.png",
     },
     extra: {
-      // These will be available at runtime via process.env or Expo Constants
       SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+      eas: {
+        projectId: "b0bba66e-96f0-42db-a020-c717fc5fdff0",
+      },
     },
   },
 };
