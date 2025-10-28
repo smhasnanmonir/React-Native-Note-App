@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NoteItems from "../components/NoteItems";
 import { Entypo } from "@expo/vector-icons";
 import AddNotePopup from "../components/AddNotePopup/AddNotePopup";
-import { supabase } from "../utils/supabase";
+import supabase from "../utils/supabase";
 
 const Home = () => {
   const navigation = useNavigation();
@@ -33,8 +33,6 @@ const Home = () => {
 
     getNotes();
   }, []);
-
-  console.log("Notes:", notes);
 
   return (
     <SafeAreaView

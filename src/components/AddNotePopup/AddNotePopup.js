@@ -11,6 +11,7 @@ import {
 import { Button, ButtonText } from "@/src/components/ui/button";
 import { Heading } from "@/src/components/ui/heading";
 import { Input, InputField } from "../ui/input";
+import supabase from "@/src/utils/supabase";
 
 export default function AddNotePopup({
   isOpen = false,
@@ -32,7 +33,7 @@ export default function AddNotePopup({
     if (onClose) onClose();
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     //   If not title, set error and return
     if (noteTitle.trim() === "") {
       setEmptyTitleError("Note Title is required");
@@ -47,6 +48,19 @@ export default function AddNotePopup({
     }
     //   If both are valid, call onConfirm
     if (onConfirm) onConfirm(noteTitle, noteContent);
+    const { data, error } = await supabase.from("posts").insert([
+      {
+        title: noteTitle,
+        content: noteContent,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error:", error);
+    } else {
+      console.log("Post created:", data);
+    }
+
     console.log("Confirmed!!", noteTitle);
     setEmptyTitleError("");
     setEmptyContentError("");
