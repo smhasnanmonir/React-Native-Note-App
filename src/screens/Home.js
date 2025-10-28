@@ -5,34 +5,29 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NoteItems from "../components/NoteItems";
 import { Entypo } from "@expo/vector-icons";
 import AddNotePopup from "../components/AddNotePopup/AddNotePopup";
-import supabase from "../utils/supabase";
+import { useNoteList } from "../queries/notes";
+import LoadingSpinner from "../components/LoadingSpinner/LoadingSpinner";
 
 const Home = () => {
   const navigation = useNavigation();
   const [showAddNotePopup, setShowAddNotePopup] = React.useState(false);
 
-  const [notes, setNotes] = React.useState([]);
+  const { data: notes, error, isPending } = useNoteList();
 
-  useEffect(() => {
-    const getNotes = async () => {
-      try {
-        const { data: notes, error } = await supabase.from("notes").select("*");
-
-        if (error) {
-          console.error("Error fetching todos:", error.message);
-          return;
-        }
-
-        if (notes && notes.length > 0) {
-          setNotes(notes);
-        }
-      } catch (error) {
-        console.error("Error fetching todos:", error.message);
-      }
-    };
-
-    getNotes();
-  }, []);
+  if (isPending) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#121212",
+        }}
+      >
+        <LoadingSpinner />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView
