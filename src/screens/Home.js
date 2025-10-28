@@ -2,7 +2,7 @@ import { Text, FlatList, Pressable, View } from "react-native";
 import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import NoteItems from "../components/NoteItems";
+import NoteItems from "../components/NoteItems/NoteItems";
 import { Entypo } from "@expo/vector-icons";
 import AddNotePopup from "../components/AddNotePopup/AddNotePopup";
 import { useNoteList } from "../queries/notes";

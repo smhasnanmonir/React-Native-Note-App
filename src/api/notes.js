@@ -8,7 +8,7 @@ export const getAllNotes = async () => {
   return data;
 };
 
-export const insertData = async (title, content) => {
+export const insertData = async ({ title, content }) => {
   let { data, error } = await supabase
     .from("notes")
     .insert([

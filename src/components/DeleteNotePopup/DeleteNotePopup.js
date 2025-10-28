@@ -10,6 +10,7 @@ import {
 import { Button, ButtonText } from "@/src/components/ui/button";
 import { Text } from "@/src/components/ui/text";
 import { Heading } from "@/src/components/ui/heading";
+import { useDeleteNote } from "@/src/queries/notes";
 
 export const DeleteNotePopup = ({
   isOpen = false,
@@ -19,7 +20,17 @@ export const DeleteNotePopup = ({
   message = "Deleting this item will remove it permanently and cannot be undone.",
   cancelLabel = "Cancel",
   confirmLabel = "Delete",
+  id,
 }) => {
+  const { mutate: deleteNote, error, isPending } = useDeleteNote();
+
+  const handleDelete = (id) => {
+    deleteNote(id);
+    console.log(id);
+    if (onConfirm) onConfirm();
+    if (onClose) onClose();
+  };
+
   return (
     <>
       <AlertDialog isOpen={isOpen} onClose={onClose} size="md">
@@ -42,13 +53,7 @@ export const DeleteNotePopup = ({
             >
               <ButtonText>{cancelLabel}</ButtonText>
             </Button>
-            <Button
-              size="sm"
-              onPress={() => {
-                if (onConfirm) onConfirm();
-                if (onClose) onClose();
-              }}
-            >
+            <Button size="sm" onPress={() => handleDelete(id)}>
               <ButtonText>{confirmLabel}</ButtonText>
             </Button>
           </AlertDialogFooter>

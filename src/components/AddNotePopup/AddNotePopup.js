@@ -12,6 +12,8 @@ import { Button, ButtonText } from "@/src/components/ui/button";
 import { Heading } from "@/src/components/ui/heading";
 import { Input, InputField } from "../ui/input";
 import supabase from "@/src/utils/supabase";
+import { useAddNote } from "@/src/queries/notes";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 export default function AddNotePopup({
   isOpen = false,
@@ -24,6 +26,8 @@ export default function AddNotePopup({
   const [noteContent, setNoteContent] = React.useState("");
   const [emptyTitleError, setEmptyTitleError] = React.useState("");
   const [emptyContentError, setEmptyContentError] = React.useState("");
+
+  const { mutate: addNote, isPending } = useAddNote();
 
   const handleClose = () => {
     setNoteTitle("");
@@ -48,18 +52,22 @@ export default function AddNotePopup({
     }
     //   If both are valid, call onConfirm
     if (onConfirm) onConfirm(noteTitle, noteContent);
-    const { data, error } = await supabase.from("posts").insert([
+
+    addNote(
       {
         title: noteTitle,
         content: noteContent,
       },
-    ]);
-
-    if (error) {
-      console.error("Error:", error);
-    } else {
-      console.log("Post created:", data);
-    }
+      {
+        onSuccess: () => {
+          Alert.alert("Successfully added the note");
+        },
+        onError: () => {
+          Alert.alert("Something went wrong!");
+          return;
+        },
+      }
+    );
 
     console.log("Confirmed!!", noteTitle);
     setEmptyTitleError("");
@@ -69,8 +77,8 @@ export default function AddNotePopup({
     if (onClose) onClose();
   };
 
-  console.log("Empty Title Error:", emptyTitleError);
-  console.log("Empty Content Error:", emptyContentError);
+  console.log("Title", noteTitle);
+  console.log("Content", noteContent);
 
   return (
     <>
@@ -134,7 +142,13 @@ export default function AddNotePopup({
               onPress={handleClose}
               size="sm"
             >
-              <ButtonText>{cancelLabel}</ButtonText>
+              <ButtonText>
+                {isPending ? (
+                  <LoadingSpinner></LoadingSpinner>
+                ) : (
+                  <Text>{cancelLabel}</Text>
+                )}
+              </ButtonText>
             </Button>
             <Button size="sm" onPress={handleConfirm}>
               <ButtonText>{confirmLabel}</ButtonText>

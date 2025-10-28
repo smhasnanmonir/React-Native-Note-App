@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
-import DeleteNotePopup from "./DeleteNotePopup/DeleteNotePopup";
+import DeleteNotePopup from "../DeleteNotePopup/DeleteNotePopup";
 const NoteItems = ({ item }) => {
   const [showDelete, setShowDelete] = React.useState(false);
   return (
@@ -79,6 +79,7 @@ const NoteItems = ({ item }) => {
         message="This action cannot be undone."
         confirmLabel="Delete"
         cancelLabel="Cancel"
+        id={item.id}
       />
     </View>
   );
