@@ -1,15 +1,40 @@
 import { Text, FlatList, Pressable, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NoteItems from "../components/NoteItems";
-import { dummyNotes } from "../constants/dummyNotes";
 import { Entypo } from "@expo/vector-icons";
 import AddNotePopup from "../components/AddNotePopup/AddNotePopup";
+import { supabase } from "../utils/supabase";
 
 const Home = () => {
   const navigation = useNavigation();
   const [showAddNotePopup, setShowAddNotePopup] = React.useState(false);
+
+  const [notes, setNotes] = React.useState([]);
+
+  useEffect(() => {
+    const getNotes = async () => {
+      try {
+        const { data: notes, error } = await supabase.from("notes").select("*");
+
+        if (error) {
+          console.error("Error fetching todos:", error.message);
+          return;
+        }
+
+        if (notes && notes.length > 0) {
+          setNotes(notes);
+        }
+      } catch (error) {
+        console.error("Error fetching todos:", error.message);
+      }
+    };
+
+    getNotes();
+  }, []);
+
+  console.log("Notes:", notes);
 
   return (
     <SafeAreaView
@@ -30,7 +55,7 @@ const Home = () => {
         Native Note
       </Text>
       <FlatList
-        data={dummyNotes}
+        data={notes}
         renderItem={({ item }) => <NoteItems item={item}></NoteItems>}
       ></FlatList>
       <Pressable
