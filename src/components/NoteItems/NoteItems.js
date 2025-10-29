@@ -1,11 +1,40 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import DeleteNotePopup from "../DeleteNotePopup/DeleteNotePopup";
+
 const NoteItems = ({ item }) => {
   const [showDelete, setShowDelete] = React.useState(false);
+  const navigation = useNavigation();
+
+  const handleNotePress = () => {
+    navigation.navigate("ViewNote", {
+      noteId: item.id,
+      noteTitle: item.title,
+      noteContent: item.content,
+      noteDate: item.created_at || new Date().toISOString(),
+    });
+  };
+
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return "Unknown date";
+    }
+  };
+
   return (
-    <View
+    <Pressable
+      onPress={handleNotePress}
       style={{
         backgroundColor: "#1c1c1e",
         borderRadius: 12,
@@ -52,7 +81,7 @@ const NoteItems = ({ item }) => {
             color: "#8E8E93",
           }}
         >
-          Date: 2025
+          {formatDate(item.created_at) || "Date not available"}
         </Text>
         <Pressable
           style={{
@@ -81,7 +110,7 @@ const NoteItems = ({ item }) => {
         cancelLabel="Cancel"
         id={item.id}
       />
-    </View>
+    </Pressable>
   );
 };
 

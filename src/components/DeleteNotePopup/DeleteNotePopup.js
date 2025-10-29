@@ -22,7 +22,7 @@ export const DeleteNotePopup = ({
   confirmLabel = "Delete",
   id,
 }) => {
-  const { mutate: deleteNote, error, isPending } = useDeleteNote();
+  const { mutate: deleteNote } = useDeleteNote();
 
   const handleDelete = (id) => {
     deleteNote(id);
